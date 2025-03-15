@@ -22,12 +22,12 @@ use Exception;
 use ReflectionFunction;
 use ReflectionMethod;
 
-class CoreHelper
+class Code
 {
     /**
      * Gets the PHP code of a template tag.
      *
-     * @param      string|Closure|array<0:string|object, 1:string>  $method     The method name (fully qualified class::name)
+     * @param      string|Closure|array<0:string|object, 1:string>  $method     The method name (fully qualified)
      * @param      array                                            $variables  The variables
      * @param      string                                           $suffix     The method name suffix if any
      *
@@ -151,9 +151,9 @@ class CoreHelper
 
                 return '';
             }
-        } catch (Exception | TemplateException) {
+        } catch (Exception|TemplateException $e) {
             if (App::config()->debugMode() || App::config()->devMode()) {
-                throw new TemplateException('Error processing template code');
+                throw new TemplateException($e->getPrevious()?->getMessage() ?? 'Error processing template code');
             }
             $code = '/* Error processing method template code */';
         }
