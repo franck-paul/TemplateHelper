@@ -1,0 +1,13 @@
+<modules xmlns:da="http://dotaddict.org/da/">
+  <module id="TemplateHelper">
+    <name>Template Helper</name>
+    <version>1.0</version>
+    <author>Franck Paul</author>
+    <desc>Template helpers</desc>
+    <date>2025-02-04T11:50:15+0100</date>
+    <file>https://github.com/franck-paul/TemplateHelper/releases/download/1.0/plugin-TemplateHelper-1.0.zip</file>
+    <da:dcmin>2.34</da:dcmin>
+    <da:details>https://open-time.net/?q=TemplateHelper</da:details>
+    <da:support>https://github.com/franck-paul/TemplateHelper</da:support>
+  </module>
+</modules>
