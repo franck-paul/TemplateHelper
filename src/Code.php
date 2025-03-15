@@ -27,11 +27,11 @@ class Code
     /**
      * Gets the PHP code of a template tag.
      *
-     * @param      string|Closure|array<0:string|object, 1:string>  $method     The method name (fully qualified)
-     * @param      array                                            $variables  The variables
+     * @param      string|Closure|array{0:string|object, 1:string}  $method     The fully qualified method name
+     * @param      array<int, mixed>                                $variables  The variables
      * @param      string                                           $suffix     The method name suffix if any
      *
-     * @throws     \Dotclear\Exception\TemplateException
+     * @throws     TemplateException
      */
     public static function getPHPCode(string|Closure|array $method, array $variables = [], string $suffix = ''): string
     {
@@ -74,7 +74,7 @@ class Code
             $start_line = $reflection_method->getStartLine() - 1; // it's actually - 1, otherwise you wont get the function() block
             $end_line   = $reflection_method->getEndLine();
 
-            if ($start_line === false || $end_line === false || ($end_line - $start_line) <= 0) {
+            if ($start_line === -1 || $end_line === false || ($end_line - $start_line) <= 0) {
                 if (App::config()->debugMode() || App::config()->devMode()) {
                     throw new TemplateException('Error processing the template code (unable to get source file lines range)');
                 }
@@ -94,7 +94,7 @@ class Code
 
             // Extract core code of method (excluding signature)
             $matches = [];
-            if (preg_match('/{(.*)}/ms', $body, $matches) !== false && isset($matches[1])) {
+            if (preg_match('/{(.*)}/ms', $body, $matches) !== false) {
                 $body = $matches[1];
 
                 // Replace static variables (values given in parameters of this helper) by their values
@@ -115,7 +115,7 @@ class Code
 
                     $type = $parameter->getType();
                     if ($type !== null) {
-                        switch ($type->getName()) {
+                        switch ((string) $type) {
                             case 'string':
                                 // May be not necessary, to be confirmed or infirmed
                                 $value = addslashes((string) $value);
@@ -153,7 +153,7 @@ class Code
             }
         } catch (Exception|TemplateException $e) {
             if (App::config()->debugMode() || App::config()->devMode()) {
-                throw new TemplateException($e->getPrevious()?->getMessage() ?? 'Error processing template code');
+                throw new TemplateException($e->getMessage() ?: 'Error processing template code', (int) $e->getCode(), $e);
             }
             $code = '/* Error processing method template code */';
         }

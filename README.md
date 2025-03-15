@@ -81,7 +81,7 @@ class FrontendTemplateCode
         bool $_list_,
         array $_params_,
         string $_tag_
-    ) {
+    ): void {
         $settings = App::blog()->settings()->get($_id_);
         $buffer   = \Dotclear\Plugin\wordCount\Helper::getCounters(
             App::frontend()->context()->posts->getExcerpt() . ' ' . App::frontend()->context()->posts->getContent(),
