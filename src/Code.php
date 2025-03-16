@@ -40,10 +40,27 @@ class Code
         try {
             // Get PHP code of corresponding template code method
             if (is_string($method)) {
+                // Method should be given as '<class>::<function>'
                 [$class, $function] = explode('::', $method);
+                if ($class === '' || is_null($function) || $function === '') {  // @phpstan-ignore-line : uncertain type
+                    if (App::config()->debugMode() || App::config()->devMode()) {
+                        throw new TemplateException('Error processing the template code for ' . self::callableName($method) . ' (unable to get class of given method)');
+                    }
+
+                    return '';
+                }
             } elseif (is_array($method)) {
+                // Method should be given as an array of 2 items: class (string or object = class instance), function (string)
                 [$class, $function] = $method;
+                if ((is_string($class) && $class === '') || is_null($function) || $function === '') {   // @phpstan-ignore-line : uncertain type
+                    if (App::config()->debugMode() || App::config()->devMode()) {
+                        throw new TemplateException('Error processing the template code for ' . self::callableName($method) . ' (unable to get class of given method)');
+                    }
+
+                    return '';
+                }
             } else {
+                // Method should be a first class closure as class::function(...)
                 $reflection_function = new ReflectionFunction($method);
                 $class               = $reflection_function->getNamespaceName();
                 $function            = $reflection_function->getShortName();
@@ -71,7 +88,7 @@ class Code
                 return '';
             }
 
-            $start_line = $reflection_method->getStartLine() - 1; // it's actually - 1, otherwise you wont get the function() block
+            $start_line = $reflection_method->getStartLine() - 1; // it's actually - 1, otherwise we wont get the function() block
             $end_line   = $reflection_method->getEndLine();
 
             if ($start_line === -1 || $end_line === false || ($end_line - $start_line) <= 0) {
