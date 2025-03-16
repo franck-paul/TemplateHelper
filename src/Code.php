@@ -127,7 +127,7 @@ class Code
                                 break;
                         }
                     }
-                    $preg_patterns[$index] = '/\$' . $parameter->name . '/';
+                    $preg_patterns[$index] = '/\$' . $parameter->name . '(?![a-zA-Z0-9_\x7f-\xff])/';
                     $preg_values[$index]   = var_export($value, true);
                     $index++;
                 }
