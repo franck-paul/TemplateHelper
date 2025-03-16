@@ -97,49 +97,51 @@ class Code
             if (preg_match('/{(.*)}/ms', $body, $matches) !== false) {
                 $body = $matches[1];
 
-                // Replace static variables (values given in parameters of this helper) by their values
-                $preg_patterns = [];
-                $preg_values   = [];
-                $index         = 0;
+                if ($variables !== []) {
+                    // Replace static variables (values given in parameters of this helper) by their values
+                    $preg_patterns = [];
+                    $preg_values   = [];
+                    $index         = 0;
 
-                $parameters = $reflection_method->getParameters();
-                if (count($parameters) > count($variables)) {
-                    if (App::config()->debugMode() || App::config()->devMode()) {
-                        throw new TemplateException('Error processing the template code for ' . self::callableName($method) . ' (not enough values given)');
-                    }
-
-                    return '';
-                }
-                foreach ($parameters as $parameter) {
-                    $value = $variables[$index];
-
-                    $type = $parameter->getType();
-                    if ($type !== null) {
-                        switch ((string) $type) {
-                            case 'string':
-                                // May be not necessary, to be confirmed or infirmed
-                                $value = addslashes((string) $value);
-
-                                break;
-                            case 'ArrayObject':
-                                $value = $value->getArrayCopy();
-
-                                break;
-                        }
-                    }
-                    $preg_patterns[$index] = '/\$' . $parameter->name . '(?![a-zA-Z0-9_\x7f-\xff])/';
-                    $preg_values[$index]   = var_export($value, true);
-                    $index++;
-                }
-
-                if ($preg_patterns !== []) {
-                    $body = preg_replace($preg_patterns, $preg_values, $body);
-                    if ($body === null) {
+                    $parameters = $reflection_method->getParameters();
+                    if (count($parameters) > count($variables)) {
                         if (App::config()->debugMode() || App::config()->devMode()) {
-                            throw new TemplateException('Error processing the template code for ' . self::callableName($method) . ' (unable to replace variables)');
+                            throw new TemplateException('Error processing the template code for ' . self::callableName($method) . ' (not enough values given)');
                         }
 
                         return '';
+                    }
+                    foreach ($parameters as $parameter) {
+                        $value = $variables[$index];
+
+                        $type = $parameter->getType();
+                        if ($type !== null) {
+                            switch ((string) $type) {
+                                case 'string':
+                                    // May be not necessary, to be confirmed or infirmed
+                                    $value = addslashes((string) $value);
+
+                                    break;
+                                case 'ArrayObject':
+                                    $value = $value->getArrayCopy();
+
+                                    break;
+                            }
+                        }
+                        $preg_patterns[$index] = '/\$' . $parameter->name . '(?![a-zA-Z0-9_\x7f-\xff])/';
+                        $preg_values[$index]   = var_export($value, true);
+                        $index++;
+                    }
+
+                    if ($preg_patterns !== []) {
+                        $body = preg_replace($preg_patterns, $preg_values, $body);
+                        if ($body === null) {
+                            if (App::config()->debugMode() || App::config()->devMode()) {
+                                throw new TemplateException('Error processing the template code for ' . self::callableName($method) . ' (unable to replace variables)');
+                            }
+
+                            return '';
+                        }
                     }
                 }
 
