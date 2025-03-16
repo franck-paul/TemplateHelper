@@ -1,11 +1,11 @@
 <modules xmlns:da="http://dotaddict.org/da/">
   <module id="TemplateHelper">
     <name>Template Helper</name>
-    <version>1.2</version>
+    <version>1.3</version>
     <author>Franck Paul</author>
     <desc>Template helpers</desc>
-    <date>2025-03-15T23:44:00+01.2</date>
-    <file>https://github.com/franck-paul/TemplateHelper/releases/download/1.2/plugin-TemplateHelper-1.2.zip</file>
+    <date>2025-03-15T23:44:00+01.3</date>
+    <file>https://github.com/franck-paul/TemplateHelper/releases/download/1.3/plugin-TemplateHelper-1.3.zip</file>
     <da:dcmin>2.34</da:dcmin>
     <da:details>https://open-time.net/?q=TemplateHelper</da:details>
     <da:support>https://github.com/franck-paul/TemplateHelper</da:support>
