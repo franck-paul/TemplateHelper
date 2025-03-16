@@ -103,8 +103,11 @@ class FrontendTemplateCode
 
 ```
 
-Use fully qualified class when using external methods.
-Its recommanded to use `$_<name>_` pattern for replaced variables by their corresponding values given in the same order as method's parameters
+Notes:
+
+- Use fully qualified class when using external methods.
+- It is recommanded to use `$_<name>_` pattern for replaced variables by their corresponding values given in the same order as method's parameters
+- Avoid using comments inside the code, if necessary put them in function description, above function declaration
 
 Will produce the following code to be inserted in template:
 
