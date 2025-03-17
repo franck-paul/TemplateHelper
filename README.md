@@ -1,5 +1,12 @@
 # TemplateHelper
 
+## compileTemplates() helper
+
+Not implemented yet:
+
+An asynchronous tool to compile template files if necessary whithout waiting for a public require for the current blog.
+To be activated by an admin or super-admin.
+
 ## getPHPCode() helper
 
 Having this method to compile a {{tpl:WordCount …}} template value:
@@ -37,7 +44,7 @@ Having this method to compile a {{tpl:WordCount …}} template value:
 
         // Get PHP Code
         return '<?php ' .
-        self::getPHPCode( // App::frontend()->template()->getPHPCode(
+        Dotclear\Plugin\TemplateHelper\Code::getPHPCode(
             // __METHOD__ . 'TemplateCode', // Method in this file (same name than this method using 'TemplateCode' as suffix)
             FrontendTemplateCode::WordCount(...),   // Method in another file, using first class callable
             // [FrontendTemplateCode::class, 'WordCount'], // Method in another file, using array of strings
