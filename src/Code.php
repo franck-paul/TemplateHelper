@@ -15,6 +15,7 @@ declare(strict_types=1);
 
 namespace Dotclear\Plugin\TemplateHelper;
 
+use ArrayObject;
 use Closure;
 use Dotclear\App;
 use Dotclear\Exception\TemplateException;
@@ -25,15 +26,43 @@ use ReflectionMethod;
 class Code
 {
     /**
-     * Gets the PHP code of a template tag.
+     * Gets the PHP code of a template tag (block/value) using the given method code.
+     *
+     * In the given method code, use array $_params_, string $_content_ and string $_tag_ as three last arguments
      *
      * @param      string|Closure|array{0:string|object, 1:string}  $method     The fully qualified method name
      * @param      array<int, mixed>                                $variables  The variables
-     * @param      string                                           $suffix     The method name suffix if any
+     * @param      array<string, mixed>|\ArrayObject<string, mixed> $attr       The attribute
+     * @param      string                                           $content    The content (for block template tags)
      *
      * @throws     TemplateException
      */
-    public static function getPHPCode(string|Closure|array $method, array $variables = [], string $suffix = ''): string
+    public static function getPHPTemplateCode(
+        string|Closure|array $method,
+        array $variables = [],
+        array|ArrayObject $attr,
+        string $content = ''
+    ): string {
+        return self::getPHPCode(
+            $method,
+            [
+                ... $variables,
+                App::frontend()->template()->getFiltersParams($attr),
+                $content,
+                App::frontend()->template()->getCurrentTag(),
+            ]
+        );
+    }
+
+    /**
+     * Gets the PHP code of the given method.
+     *
+     * @param      string|Closure|array{0:string|object, 1:string}  $method     The fully qualified method name
+     * @param      array<int, mixed>                                $variables  The variables
+     *
+     * @throws     TemplateException
+     */
+    public static function getPHPCode(string|Closure|array $method, array $variables = []): string
     {
         $code = '';
 
@@ -77,7 +106,7 @@ class Code
                 }
             }
 
-            $reflection_method = new ReflectionMethod($class, $function . $suffix);
+            $reflection_method = new ReflectionMethod($class, $function);
 
             $filename = $reflection_method->getFileName();
             if ($filename === false) {
