@@ -61,6 +61,25 @@ Having this method to compile a {{tpl:WordCount …}} template value:
             ],
         ) .
         ' ?>';
+
+        // You may also use
+        return '<?php ' .
+        Dotclear\Plugin\TemplateHelper\Code::getPHPTemplateCode(
+            // __METHOD__ . 'TemplateCode', // Method in this file (same name than this method using 'TemplateCode' as suffix)
+            FrontendTemplateCode::WordCount(...),   // Method in another file, using first class callable
+            // [FrontendTemplateCode::class, 'WordCount'], // Method in another file, using array of strings
+            [
+                My::id(),
+                $wpm,
+                (bool) $chars,
+                (bool) $words,
+                (bool) $folios,
+                (bool) $time,
+                (bool) $list,
+            ],
+            $attr,
+        ) .
+        ' ?>';
     }
 ```
 
