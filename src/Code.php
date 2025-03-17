@@ -26,31 +26,63 @@ use ReflectionMethod;
 class Code
 {
     /**
-     * Gets the PHP code of a template tag (block/value) using the given method code.
+     * Gets the PHP code of a template tag (block) using the given method code.
      *
-     * In the given method code, use array $_params_, string $_content_ and string $_tag_ as three last arguments
+     * In the given method code, use string $content, array $_params_ and string $_tag_ as three last arguments
      *
      * @param      string|Closure|array{0:string|object, 1:string}  $method     The fully qualified method name
      * @param      array<int, mixed>                                $variables  The variables
-     * @param      array<string, mixed>|\ArrayObject<string, mixed> $attr       The attribute
+     * @param      array<string, mixed>|\ArrayObject<string, mixed> $attr       The template tag attributes
      * @param      string                                           $content    The content (for block template tags)
+     * @param      bool                                             $php_tags   True if the code should be given within start/end php tags
      *
      * @throws     TemplateException
      */
-    public static function getPHPTemplateCode(
+    public static function getPHPTemplateBlockCode(
+        string|Closure|array $method,
+        array $variables = [],
+        string $content = '',
+        array|ArrayObject $attr = [],
+        bool $php_tags = true,
+    ): string {
+        return self::getPHPCode(
+            $method,
+            [
+                ... $variables,
+                $content,
+                App::frontend()->template()->getFiltersParams($attr),
+                App::frontend()->template()->getCurrentTag(),
+            ],
+            $php_tags,
+        );
+    }
+
+    /**
+     * Gets the PHP code of a template tag (value) using the given method code.
+     *
+     * In the given method code, use array $_params_ and string $_tag_ as two last arguments
+     *
+     * @param      string|Closure|array{0:string|object, 1:string}  $method     The fully qualified method name
+     * @param      array<int, mixed>                                $variables  The variables
+     * @param      array<string, mixed>|\ArrayObject<string, mixed> $attr       The template tag attributes
+     * @param      bool                                             $php_tags   True if the code should be given within start/end php tags
+     *
+     * @throws     TemplateException
+     */
+    public static function getPHPTemplateValueCode(
         string|Closure|array $method,
         array $variables = [],
         array|ArrayObject $attr = [],
-        string $content = ''
+        bool $php_tags = true,
     ): string {
         return self::getPHPCode(
             $method,
             [
                 ... $variables,
                 App::frontend()->template()->getFiltersParams($attr),
-                $content,
                 App::frontend()->template()->getCurrentTag(),
-            ]
+            ],
+            $php_tags,
         );
     }
 
@@ -59,11 +91,17 @@ class Code
      *
      * @param      string|Closure|array{0:string|object, 1:string}  $method     The fully qualified method name
      * @param      array<int, mixed>                                $variables  The variables
+     * @param      bool                                             $php_tags   True if the code should be given within start/end php tags
      *
      * @throws     TemplateException
      */
-    public static function getPHPCode(string|Closure|array $method, array $variables = []): string
-    {
+    public static function getPHPCode(
+        string|Closure|array $method,
+        array $variables = [],
+        bool $php_tags = true
+    ): string {
+        $return = fn ($code): string => ($php_tags ? '<?php ' : '') . $code . ($php_tags ? ' ?>' : '');
+
         $code = '';
 
         try {
@@ -76,7 +114,7 @@ class Code
                         throw new TemplateException('Error processing the template code for ' . self::callableName($method) . ' (unable to get class of given method)');
                     }
 
-                    return '';
+                    return $return('');
                 }
             } elseif (is_array($method)) {
                 // Method should be given as an array of 2 items: class (string or object = class instance), function (string)
@@ -86,7 +124,7 @@ class Code
                         throw new TemplateException('Error processing the template code for ' . self::callableName($method) . ' (unable to get class of given method)');
                     }
 
-                    return '';
+                    return $return('');
                 }
             } else {
                 // Method should be a first class closure as class::function(...)
@@ -100,7 +138,7 @@ class Code
                             throw new TemplateException('Error processing the template code for ' . self::callableName($method) . ' (unable to get class of given method)');
                         }
 
-                        return '';
+                        return $return('');
                     }
                     $class = $class->getName();
                 }
@@ -114,7 +152,7 @@ class Code
                     throw new TemplateException('Error processing the template code for ' . self::callableName($method) . ' (unable to get source file)');
                 }
 
-                return '';
+                return $return('');
             }
 
             $start_line = $reflection_method->getStartLine() - 1; // it's actually - 1, otherwise we wont get the function() block
@@ -125,7 +163,7 @@ class Code
                     throw new TemplateException('Error processing the template code for ' . self::callableName($method) . ' (unable to get source file lines range)');
                 }
 
-                return '';
+                return $return('');
             }
 
             $source = file($filename);
@@ -134,7 +172,7 @@ class Code
                     throw new TemplateException('Error processing the template code for ' . self::callableName($method) . ' (unable to read source file)');
                 }
 
-                return '';
+                return $return('');
             }
             $body = trim(implode('', array_slice($source, $start_line, $end_line - $start_line)));
 
@@ -155,27 +193,30 @@ class Code
                             throw new TemplateException('Error processing the template code for ' . self::callableName($method) . ' (not enough values given)');
                         }
 
-                        return '';
+                        return $return($code);
                     }
                     foreach ($parameters as $parameter) {
                         $value = $variables[$index];
+                        $html  = str_ends_with($parameter->name, '_HTML');
+                        if (!$html) {
+                            $type = $parameter->getType();
+                            if ($type !== null) {
+                                switch ((string) $type) {
+                                    case 'string':
+                                        // May be not necessary, to be confirmed or infirmed
+                                        $value = addslashes((string) $value);
 
-                        $type = $parameter->getType();
-                        if ($type !== null) {
-                            switch ((string) $type) {
-                                case 'string':
-                                    // May be not necessary, to be confirmed or infirmed
-                                    $value = addslashes((string) $value);
+                                        break;
+                                    case 'ArrayObject':
+                                        $value = $value->getArrayCopy();
 
-                                    break;
-                                case 'ArrayObject':
-                                    $value = $value->getArrayCopy();
-
-                                    break;
+                                        break;
+                                }
                             }
                         }
+
                         $preg_patterns[$index] = '/\$' . $parameter->name . '(?![a-zA-Z0-9_\x7f-\xff])/';
-                        $preg_values[$index]   = var_export($value, true);
+                        $preg_values[$index]   = $html ? $value : var_export($value, true);
                         $index++;
                     }
 
@@ -186,7 +227,7 @@ class Code
                                 throw new TemplateException('Error processing the template code for ' . self::callableName($method) . ' (unable to replace variables)');
                             }
 
-                            return '';
+                            return $return('');
                         }
                     }
                 }
@@ -197,7 +238,7 @@ class Code
                     throw new TemplateException('Error processing the template code for ' . self::callableName($method) . ' (unable to get method core code)');
                 }
 
-                return '';
+                return $return('');
             }
         } catch (Exception|TemplateException $e) {
             if (App::config()->debugMode() || App::config()->devMode()) {
@@ -206,7 +247,7 @@ class Code
             $code = '/* Error processing method template code for ' . self::callableName($method) . ' */';
         }
 
-        return $code;
+        return $return($code);
     }
 
     /**
