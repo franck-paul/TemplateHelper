@@ -125,10 +125,10 @@ class FrontendTemplateCode
 
 Notes:
 
-- Use fully qualified class when using external methods.
-- The values for each variables must be given in the same order as the template code arguments.
+- Use **fully qualified** class when using external methods.
+- The values for each variables must be given in the **same order** as the template code arguments.
 - It is recommanded to use `$_<name>_` pattern for replaced variables by their corresponding values given in the same order as method's parameters.
-- If a variable should be replaced as is (useful for HTML code outside of PHP start/end tags), use a variable name which ends with `_HTML`.
+- If a variable should be replaced **as is** (useful for HTML code outside of PHP start/end tags), use a variable name which ends with `_HTML`.
 - Avoid using comments inside the code, if necessary put them in function description, above function declaration.
 
 Will produce the following code to be inserted in template:
