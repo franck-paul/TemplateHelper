@@ -28,7 +28,7 @@ class Code
     /**
      * Gets the PHP code of a template tag (block) using the given method code.
      *
-     * In the given method code, use string $content, array $_params_ and string $_tag_ as three last arguments
+     * In the given method code, the string content, array filter's params and string current template's tag must be the three last arguments
      *
      * @param      string|Closure|array{0:string|object, 1:string}  $method     The fully qualified method name
      * @param      array<int, mixed>                                $variables  The variables
@@ -60,7 +60,7 @@ class Code
     /**
      * Gets the PHP code of a template tag (value) using the given method code.
      *
-     * In the given method code, use array $_params_ and string $_tag_ as two last arguments
+     * In the given method code, the array filter's params and string current template's tag must be the two last arguments
      *
      * @param      string|Closure|array{0:string|object, 1:string}  $method     The fully qualified method name
      * @param      array<int, mixed>                                $variables  The variables
@@ -183,10 +183,6 @@ class Code
 
                 if ($variables !== []) {
                     // Replace static variables (values given in parameters of this helper) by their values
-                    $preg_patterns = [];
-                    $preg_values   = [];
-                    $index         = 0;
-
                     $parameters = $reflection_method->getParameters();
                     if (count($parameters) > count($variables)) {
                         if (App::config()->debugMode() || App::config()->devMode()) {
@@ -195,6 +191,11 @@ class Code
 
                         return $return($code);
                     }
+
+                    // Get values for variables replacement
+                    $preg_patterns = [];
+                    $preg_values   = [];
+                    $index         = 0;
                     foreach ($parameters as $parameter) {
                         $value = $variables[$index];
                         $html  = str_ends_with($parameter->name, '_HTML');
