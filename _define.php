@@ -17,10 +17,11 @@ $this->registerModule(
     'Franck Paul',
     '1.5',
     [
-        'date'     => '2025-03-15T23:44:00+01.5',
-        'requires' => [['core', '2.34']],
-        'type'     => 'plugin',
-        'settings' => [],
+        'date'        => '2025-03-15T23:44:00+01.5',
+        'requires'    => [['core', '2.34']],
+        'type'        => 'plugin',
+        'permissions' => 'My',
+        'settings'    => [],
 
         'details'    => 'https://open-time.net/?q=TemplateHelper',
         'support'    => 'https://github.com/franck-paul/TemplateHelper',
