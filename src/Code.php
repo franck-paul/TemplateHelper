@@ -28,7 +28,8 @@ class Code
     /**
      * Gets the PHP code of a template tag (block) using the given method code.
      *
-     * In the given method code, the string content, array filter's params and string current template's tag must be the three last arguments
+     * In the given method code, the string content, array filter's params and string current template's tag, if used,
+     * must be the three last arguments
      *
      * @param      string|Closure|array{0:string|object, 1:string}  $method     The fully qualified method name
      * @param      array<int, mixed>                                $variables  The variables
@@ -60,7 +61,8 @@ class Code
     /**
      * Gets the PHP code of a template tag (value) using the given method code.
      *
-     * In the given method code, the array filter's params and string current template's tag must be the two last arguments
+     * In the given method code, the array filter's params and string current template's tag, if used,
+     * must be the two last arguments
      *
      * @param      string|Closure|array{0:string|object, 1:string}  $method     The fully qualified method name
      * @param      array<int, mixed>                                $variables  The variables
