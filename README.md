@@ -259,17 +259,6 @@ class FrontendTemplateCode
         App::frontend()->context()->meta = null;
         unset($series_options);
     }
-
-    public static function SerieID(
-        array $_params_,
-        string $_tag_
-    ): void {
-        echo \Dotclear\Core\Frontend\Ctx::global_filters(
-            App::frontend()->context()->meta->meta_id,
-            $_params_,
-            $_tag_
-        );
-    }
 }
 ```
 
