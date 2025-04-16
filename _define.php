@@ -15,9 +15,9 @@ $this->registerModule(
     'Template Helper',
     'Template Helper methods',
     'Franck Paul',
-    '1.6',
+    '1.7',
     [
-        'date'        => '2025-03-15T23:44:00+01.6',
+        'date'        => '2025-03-15T23:44:00+01.7',
         'requires'    => [['core', '2.34']],
         'type'        => 'plugin',
         'permissions' => 'My',
