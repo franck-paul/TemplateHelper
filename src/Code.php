@@ -176,7 +176,13 @@ class Code
 
                 return $return('');
             }
-            $body = trim(implode('', array_slice($source, $start_line, $end_line - $start_line)));
+
+            $source = array_slice($source, $start_line, $end_line - $start_line);
+
+            // Remove every line ending with // @phpcode-remove
+            $source = array_filter($source, fn (string $line): bool => !str_ends_with($line, '// @phpcode-remove' . "\n"));
+
+            $body = trim(implode('', $source));
 
             // Extract core code of method (excluding signature)
             $matches = [];
