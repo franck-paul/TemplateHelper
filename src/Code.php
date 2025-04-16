@@ -205,9 +205,9 @@ class Code
                     $preg_values   = [];
                     $index         = 0;
                     foreach ($parameters as $parameter) {
-                        $value = $variables[$index];
-                        $html  = str_ends_with($parameter->name, '_HTML');
-                        if (!$html) {
+                        $value  = $variables[$index];
+                        $direct = str_ends_with($parameter->name, '_HTML') || str_ends_with($parameter->name, '_CODE');
+                        if (!$direct) {
                             $type = $parameter->getType();
                             if ($type !== null) {
                                 switch ((string) $type) {
@@ -225,7 +225,7 @@ class Code
                         }
 
                         $preg_patterns[$index] = '/\$' . $parameter->name . '(?![a-zA-Z0-9_\x7f-\xff])/';
-                        $preg_values[$index]   = $html ? $value : var_export($value, true);
+                        $preg_values[$index]   = $direct ? $value : var_export($value, true);
                         $index++;
                     }
 
