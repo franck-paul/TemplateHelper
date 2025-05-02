@@ -125,12 +125,12 @@ class FrontendTemplateCode
 
 Notes:
 
-- Use **fully qualified** class when using external methods.
+- Use **fully qualified** classes when using external methods.
 - The values for each variables must be given in the **same order** as the template code arguments.
 - It is recommanded to use `$_<name>_` pattern for replaced variables by their corresponding values given in the same order as method's parameters.
 - If a variable should be replaced **as is** (useful for HTML code outside of PHP start/end tags), use a variable name which ends with `_HTML` or `_CODE`.
 - Avoid using comments inside the code, if necessary put them in function description, above function declaration.
-- If a specific line must not be in final result, end it with `// @phpcode-remove`
+- If a specific line must not be in final result, end it with `// @phpcode-remove` (with one exact space betwwen `//` and `@`)
 
 Will produce the following code to be inserted in template:
 
@@ -240,7 +240,7 @@ class FrontendTemplateCode
         mixed $_limit_,
         string $_sortby_,
         string $_order_,
-        string $_content_HTML,
+        string $_content_HTML,  // Will be replaced as is without any treatment
     ): void {
         $series_options = [
             'meta_type' => $_type_,
