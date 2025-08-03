@@ -284,7 +284,7 @@ class Code
                     // Cope with class::method(...) forms
                     $c = $r->getClosureScopeClass();
                     if (!is_null($c)) {
-                        $ns = $c->getName() !== '' ? $c->getName() . '::' : ''; // @phpstan-ignore-line
+                        $ns = $c->getName() . '::';
                     }
                 }
 
