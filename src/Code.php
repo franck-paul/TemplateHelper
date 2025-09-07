@@ -31,7 +31,7 @@ class Code
      * In the given method code, the string content, array filter's params and string current template's tag, if used,
      * must be the three last arguments
      *
-     * @param      string|Closure|array{0:string|object, 1:string}  $method     The fully qualified method name
+     * @param      string|Closure|list{0:string|object, 1:string}   $method     The fully qualified method name
      * @param      array<int, mixed>                                $variables  The variables
      * @param      array<string, mixed>|\ArrayObject<string, mixed> $attr       The template tag attributes
      * @param      string                                           $content    The content (for block template tags)
@@ -64,7 +64,7 @@ class Code
      * In the given method code, the array filter's params and string current template's tag, if used,
      * must be the two last arguments
      *
-     * @param      string|Closure|array{0:string|object, 1:string}  $method     The fully qualified method name
+     * @param      string|Closure|list{0:string|object, 1:string}   $method     The fully qualified method name
      * @param      array<int, mixed>                                $variables  The variables
      * @param      array<string, mixed>|\ArrayObject<string, mixed> $attr       The template tag attributes
      * @param      bool                                             $php_tags   True if the code should be given within start/end php tags
@@ -91,7 +91,7 @@ class Code
     /**
      * Gets the PHP code of the given method.
      *
-     * @param      string|Closure|array{0:string|object, 1:string}  $method     The fully qualified method name
+     * @param      string|Closure|list{0:string|object, 1:string}   $method     The fully qualified method name
      * @param      array<int, mixed>                                $variables  The variables
      * @param      bool                                             $php_tags   True if the code should be given within start/end php tags
      *
