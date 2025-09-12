@@ -113,7 +113,7 @@ class FrontendTemplateCode
             $_time_,
             $_list_
         );
-        echo \Dotclear\Core\Frontend\Ctx::global_filters(
+        echo App::frontend()->context()::global_filters(
             $buffer,
             $_params_,
             $_tag_
@@ -146,7 +146,7 @@ Will produce the following code to be inserted in template:
             false,
             true
         );
-        echo \Dotclear\Core\Frontend\Ctx::global_filters(
+        echo App::frontend()->context()::global_filters(
             $buffer,
             array (
   0 => NULL,
@@ -205,7 +205,7 @@ public static function Series(array|ArrayObject $attr, string $content): string
 With `$attr` equal to `[]` and `$content` equal to:
 
 ```html
-<li><a href="<?= \Dotclear\Core\Frontend\Ctx::global_filters(App::blog()->url() . App::url()->getURLFor('serie', rawurlencode(App::frontend()->context()->meta->meta_id)), [
+<li><a href="<?= App::frontend()->context()::global_filters(App::blog()->url() . App::url()->getURLFor('serie', rawurlencode(App::frontend()->context()->meta->meta_id)), [
     0             => null,
     'encode_xml'  => 0,
     'encode_html' => 0,
@@ -216,7 +216,7 @@ With `$attr` equal to `[]` and `$content` equal to:
     'remove_html' => 0,
     'capitalize'  => 0,
     'strip_tags'  => 0,
-], 'SerieURL') ?>" class="tag<?= App::frontend()->context()->meta->roundpercent ?>"><?= \Dotclear\Core\Frontend\Ctx::global_filters(App::frontend()->context()->meta->meta_id, [
+], 'SerieURL') ?>" class="tag<?= App::frontend()->context()->meta->roundpercent ?>"><?= App::frontend()->context()::global_filters(App::frontend()->context()->meta->meta_id, [
     0             => null,
     'encode_xml'  => 0,
     'encode_html' => 0,
