@@ -187,7 +187,7 @@ class Code
             // Extract core code of method (excluding signature)
             $matches = [];
             if (preg_match('/{(.*)}/ms', $body, $matches) !== false) {
-                $body = $matches[1];
+                $body = $matches[1] ?? '';
 
                 if ($variables !== []) {
                     // Replace static variables (values given in parameters of this helper) by their values
