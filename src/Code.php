@@ -8,7 +8,7 @@
  *
  * @author Franck Paul and contributors
  *
- * @copyright Franck Paul carnet.franck.paul@gmail.com
+ * @copyright Franck Paul contact@open-time.net
  * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
 declare(strict_types=1);
@@ -102,7 +102,7 @@ class Code
         array $variables = [],
         bool $php_tags = true
     ): string {
-        $return = fn ($code): string => ($php_tags ? '<?php ' : '') . $code . ($php_tags ? ' ?>' : '');
+        $return = fn (string $code): string => ($php_tags ? '<?php ' : '') . $code . ($php_tags ? ' ?>' : '');
 
         $code = '';
 
@@ -213,19 +213,26 @@ class Code
                                 switch ((string) $type) {
                                     case 'string':
                                         // May be not necessary, to be confirmed or infirmed
-                                        $value = addslashes((string) $value);
+                                        $value = is_string($value) ? addslashes($value) : $value;
 
                                         break;
                                     case 'ArrayObject':
-                                        $value = $value->getArrayCopy();
+                                        $value = $value instanceof ArrayObject ? $value->getArrayCopy() : $value;
 
                                         break;
                                 }
                             }
                         }
 
+                        if ($direct) {
+                            // Allow string or numeric value for direct replacement
+                            $replacement = is_string($value) || is_numeric($value) ? $value : '';
+                        } else {
+                            $replacement = var_export($value, true);
+                        }
+
                         $preg_patterns[$index] = '/\$' . $parameter->name . '(?![a-zA-Z0-9_\x7f-\xff])/';
-                        $preg_values[$index]   = $direct ? $value : var_export($value, true);
+                        $preg_values[$index]   = $replacement;
                         $index++;
                     }
 
@@ -274,7 +281,9 @@ class Code
                 $name = $callable;
             } elseif (is_array($callable)) {
                 // Class, method
-                $name = is_object($callable[0]) ? $callable[0]::class . '-&gt;' . $callable[1] : $callable[0] . '::' . $callable[1];
+                $class = is_object($callable[0]) ? $callable[0]::class : (is_string($callable[0]) ? $callable[0] : '???');
+                $fn    = is_string($fn = $callable[1]) ? $fn : '???';
+                $name  = is_object($callable[0]) ? $class . '-&gt;' . $fn : $class . '::' . $fn;
             } elseif ($callable instanceof \Closure) {
                 // Closure
                 $r  = new ReflectionFunction($callable);
