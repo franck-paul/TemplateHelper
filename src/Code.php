@@ -142,6 +142,7 @@ class Code
 
                         return $return('');
                     }
+
                     $class = $class->getName();
                 }
             }
@@ -260,6 +261,7 @@ class Code
             if (App::config()->debugMode() || App::config()->devMode()) {
                 throw new TemplateException($e->getMessage() ?: 'Error processing template code for ' . self::callableName($method), (int) $e->getCode(), $e);
             }
+
             $code = '/* Error processing method template code for ' . self::callableName($method) . ' */';
         }
 
