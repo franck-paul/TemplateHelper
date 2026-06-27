@@ -111,7 +111,7 @@ class Code
             if (is_string($method)) {
                 // Method should be given as '<class>::<function>'
                 [$class, $function] = explode('::', $method);
-                if ($class === '' || is_null($function) || $function === '') {  // @phpstan-ignore-line : uncertain type
+                if ($class === '' || is_null($function) || $function === '') {  // @phpstan-ignore function.impossibleType
                     if (App::config()->debugMode() || App::config()->devMode()) {
                         throw new TemplateException('Error processing the template code for ' . self::callableName($method) . ' (unable to get class of given method)');
                     }
@@ -121,7 +121,7 @@ class Code
             } elseif (is_array($method)) {
                 // Method should be given as an array of 2 items: class (string or object = class instance), function (string)
                 [$class, $function] = $method;
-                if ((is_string($class) && $class === '') || is_null($function) || $function === '') {   // @phpstan-ignore-line : uncertain type
+                if ((is_string($class) && $class === '') || is_null($function) || $function === '') {   // @phpstan-ignore function.impossibleType
                     if (App::config()->debugMode() || App::config()->devMode()) {
                         throw new TemplateException('Error processing the template code for ' . self::callableName($method) . ' (unable to get class of given method)');
                     }
