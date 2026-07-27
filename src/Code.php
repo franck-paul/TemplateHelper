@@ -161,7 +161,10 @@ class Code
             $start_line = $reflection_method->getStartLine() - 1; // it's actually - 1, otherwise we wont get the function() block
             $end_line   = $reflection_method->getEndLine();
 
-            if ($start_line === -1 || $end_line === false || ($end_line - $start_line) <= 0) {
+            if ($start_line  === -1
+                || $end_line === false
+                || ($end_line - $start_line) <= 0
+            ) {
                 if (App::config()->debugMode() || App::config()->devMode()) {
                     throw new TemplateException('Error processing the template code for ' . self::callableName($method) . ' (unable to get source file lines range)');
                 }
