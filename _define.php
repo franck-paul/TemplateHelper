@@ -11,21 +11,25 @@
  * @copyright Franck Paul contact@open-time.net
  * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
-$this->registerModule(
-    'Template Helper',
-    'Template Helper methods',
-    'Franck Paul',
-    '2.4',
-    [
-        'date'        => '2025-03-15T23:44:00+02.4',
-        'requires'    => [['core', '2.36']],
-        'type'        => 'plugin',
-        'permissions' => 'My',
-        'settings'    => [],
+declare(strict_types=1);
 
-        'details'    => 'https://open-time.net/?q=TemplateHelper',
-        'support'    => 'https://github.com/franck-paul/TemplateHelper',
-        'repository' => 'https://raw.githubusercontent.com/franck-paul/TemplateHelper/main/dcstore.xml',
-        'license'    => 'gpl2',
-    ]
-);
+if (isset($this) && is_object($this) && method_exists($this, 'registerModule') && isset($this->id) && is_string($this->id)) {
+    $this->registerModule(
+        'Template Helper',
+        'Template Helper methods',
+        'Franck Paul',
+        '2.4',
+        [
+            'date'        => '2025-03-15T23:44:00+02.4',
+            'requires'    => [['core', '2.36']],
+            'type'        => 'plugin',
+            'permissions' => 'My',
+            'settings'    => [],
+
+            'details'    => 'https://open-time.net/?q=TemplateHelper',
+            'support'    => 'https://github.com/franck-paul/TemplateHelper',
+            'repository' => 'https://raw.githubusercontent.com/franck-paul/TemplateHelper/main/dcstore.xml',
+            'license'    => 'gpl2',
+        ]
+    );
+}
