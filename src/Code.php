@@ -130,11 +130,11 @@ class Code
                 }
             } else {
                 // Method should be a first class closure as class::function(...)
-                $reflection_function = new ReflectionFunction($method);
-                $class               = $reflection_function->getNamespaceName();
-                $function            = $reflection_function->getShortName();
+                $reflectionFunction = new ReflectionFunction($method);
+                $class              = $reflectionFunction->getNamespaceName();
+                $function           = $reflectionFunction->getShortName();
                 if ($class === '') {
-                    $class = $reflection_function->getClosureScopeClass();
+                    $class = $reflectionFunction->getClosureScopeClass();
                     if ($class === null) {
                         if (App::config()->debugMode() || App::config()->devMode()) {
                             throw new TemplateException('Error processing the template code for ' . self::callableName($method) . ' (unable to get class of given method)');
@@ -147,9 +147,9 @@ class Code
                 }
             }
 
-            $reflection_method = new ReflectionMethod($class, $function);
+            $reflectionMethod = new ReflectionMethod($class, $function);
 
-            $filename = $reflection_method->getFileName();
+            $filename = $reflectionMethod->getFileName();
             if ($filename === false) {
                 if (App::config()->debugMode() || App::config()->devMode()) {
                     throw new TemplateException('Error processing the template code for ' . self::callableName($method) . ' (unable to get source file)');
@@ -158,8 +158,8 @@ class Code
                 return $return('');
             }
 
-            $start_line = $reflection_method->getStartLine() - 1; // it's actually - 1, otherwise we wont get the function() block
-            $end_line   = $reflection_method->getEndLine();
+            $start_line = $reflectionMethod->getStartLine() - 1; // it's actually - 1, otherwise we wont get the function() block
+            $end_line   = $reflectionMethod->getEndLine();
 
             if ($start_line  === -1
                 || $end_line === false
@@ -195,7 +195,7 @@ class Code
 
                 if ($variables !== []) {
                     // Replace static variables (values given in parameters of this helper) by their values
-                    $parameters = $reflection_method->getParameters();
+                    $parameters = $reflectionMethod->getParameters();
                     if (count($parameters) > count($variables)) {
                         if (App::config()->debugMode() || App::config()->devMode()) {
                             throw new TemplateException('Error processing the template code for ' . self::callableName($method) . ' (not enough values given)');
@@ -291,12 +291,12 @@ class Code
                 $name  = is_object($callable[0]) ? $class . '-&gt;' . $fn : $class . '::' . $fn;
             } elseif ($callable instanceof \Closure) {
                 // Closure
-                $r  = new ReflectionFunction($callable);
-                $ns = (bool) $r->getNamespaceName() ? $r->getNamespaceName() . '::' : '';
-                $fn = $r->getShortName() ?: '__closure__';
+                $reflectionFunction = new ReflectionFunction($callable);
+                $ns                 = (bool) $reflectionFunction->getNamespaceName() ? $reflectionFunction->getNamespaceName() . '::' : '';
+                $fn                 = $reflectionFunction->getShortName() ?: '__closure__';
                 if ($ns === '') {
                     // Cope with class::method(...) forms
-                    $c = $r->getClosureScopeClass();
+                    $c = $reflectionFunction->getClosureScopeClass();
                     if (!is_null($c)) {
                         $ns = $c->getName() . '::';
                     }
