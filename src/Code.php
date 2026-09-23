@@ -186,6 +186,9 @@ class Code
             // Remove every line ending with // @phpcode-remove
             $source = array_filter($source, fn (string $line): bool => !str_ends_with($line, '// @phpcode-remove' . "\n"));
 
+            // Remove every line ending with // @phpcode-ignore
+            $source = array_filter($source, fn (string $line): bool => !str_ends_with($line, '// @phpcode-ignore' . "\n"));
+
             $body = trim(implode('', $source));
 
             // Extract core code of method (excluding signature)
