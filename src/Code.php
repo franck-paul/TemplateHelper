@@ -158,7 +158,7 @@ class Code
                 return $return('');
             }
 
-            $start_line = $reflectionMethod->getStartLine() - 1; // it's actually - 1, otherwise we wont get the function() block
+            $start_line = (int) $reflectionMethod->getStartLine() - 1; // it's actually - 1, otherwise we wont get the function() block
             $end_line   = $reflectionMethod->getEndLine();
 
             if ($start_line  === -1
