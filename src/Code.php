@@ -110,8 +110,16 @@ class Code
             // Get PHP code of corresponding template code method
             if (is_string($method)) {
                 // Method should be given as '<class>::<function>'
+                if (!str_contains($method, '::')) {
+                    if (App::config()->debugMode() || App::config()->devMode()) {
+                        throw new TemplateException('Error processing the template code for ' . self::callableName($method) . ' (unable to get class of given method)');
+                    }
+
+                    return '';
+                }
+
                 [$class, $function] = explode('::', $method);
-                if ($class === '' || is_null($function) || $function === '') {  // @phpstan-ignore function.impossibleType
+                if ($class === '' || $function === '') {
                     if (App::config()->debugMode() || App::config()->devMode()) {
                         throw new TemplateException('Error processing the template code for ' . self::callableName($method) . ' (unable to get class of given method)');
                     }
