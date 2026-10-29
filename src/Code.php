@@ -20,6 +20,7 @@ use Closure;
 use Dotclear\App;
 use Dotclear\Exception\TemplateException;
 use Exception;
+use ReflectionClass;
 use ReflectionFunction;
 use ReflectionMethod;
 
@@ -143,7 +144,7 @@ class Code
                 $function           = $reflectionFunction->getShortName();
                 if ($class === '') {
                     $class = $reflectionFunction->getClosureScopeClass();
-                    if ($class === null) {
+                    if (!$class instanceof ReflectionClass) {
                         if (App::config()->debugMode() || App::config()->devMode()) {
                             throw new TemplateException('Error processing the template code for ' . self::callableName($method) . ' (unable to get class of given method)');
                         }
