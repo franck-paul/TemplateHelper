@@ -220,43 +220,40 @@ class Code
                     }
 
                     // Get values for variables replacement
-                    $preg_patterns = [];
-                    $preg_values   = [];
-                    $index         = 0;
+                    $replacements = [];
+                    $index        = 0;
                     foreach ($parameters as $parameter) {
                         $value  = $variables[$index];
                         $direct = str_ends_with($parameter->name, '_HTML') || str_ends_with($parameter->name, '_CODE');
                         if (!$direct) {
                             $type = $parameter->getType();
-                            if ($type !== null) {
-                                switch ((string) $type) {
-                                    case 'string':
-                                        // May be not necessary, to be confirmed or infirmed
-                                        $value = is_string($value) ? addslashes($value) : $value;
-
-                                        break;
-                                    case 'ArrayObject':
-                                        $value = $value instanceof ArrayObject ? $value->getArrayCopy() : $value;
-
-                                        break;
-                                }
+                            if ((string) $type === 'ArrayObject') {
+                                $value = $value instanceof ArrayObject ? $value->getArrayCopy() : $value;
                             }
                         }
 
                         if ($direct) {
                             // Allow string or numeric value for direct replacement
-                            $replacement = is_string($value) || is_numeric($value) ? $value : '';
+                            $replacement = is_string($value) || is_numeric($value) ? (string) $value : '';
                         } else {
                             $replacement = var_export($value, true);
                         }
 
-                        $preg_patterns[$index] = '/\$' . $parameter->name . '(?![a-zA-Z0-9_\x7f-\xff])/';
-                        $preg_values[$index]   = $replacement;
+                        $replacements[$parameter->name] = $replacement;
                         $index++;
                     }
 
-                    if ($preg_patterns !== []) {
-                        $body = preg_replace($preg_patterns, $preg_values, $body);
+                    if ($replacements !== []) {
+                        $pattern = '/\$(' . implode('|', array_map(
+                            static fn (string $name): string => preg_quote($name, '/'),
+                            array_keys($replacements),
+                        )) . ')(?![a-zA-Z0-9_\x7f-\xff])/';
+
+                        $body = preg_replace_callback(
+                            $pattern,
+                            static fn (array $matches): string => $replacements[$matches[1]],
+                            $body,
+                        );
                         if ($body === null) {
                             if (App::config()->debugMode() || App::config()->devMode()) {
                                 throw new TemplateException('Error processing the template code for ' . self::callableName($method) . ' (unable to replace variables)');
