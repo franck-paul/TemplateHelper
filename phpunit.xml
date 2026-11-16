@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="../../git-dc/vendor/phpunit/phpunit/phpunit.xsd"
+  bootstrap="../../git-dc/tests/unit/bootstrap.php"
+  cacheDirectory="/tmp/.phpunit.cache"
+  failOnRisky="true"
+  failOnWarning="true"
+  beStrictAboutTestsThatDoNotTestAnything="true"
+  colors="true">
+
+  <testsuites>
+    <testsuite name="TemplateHelper unit">
+      <directory>tests</directory>
+    </testsuite>
+  </testsuites>
+
+  <source>
+    <include>
+      <file>src/Code.php</file>
+    </include>
+  </source>
+
+  <coverage includeUncoveredFiles="false"
+    pathCoverage="false"
+    ignoreDeprecatedCodeUnits="true"
+    disableCodeCoverageIgnore="true">
+    <report>
+      <html outputDirectory="coverage" lowUpperBound="50" highLowerBound="90"/>
+    </report>
+  </coverage>
+</phpunit>
