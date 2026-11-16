@@ -18,9 +18,9 @@ if (isset($this) && is_object($this) && method_exists($this, 'registerModule') &
         'Template Helper',
         'Template Helper methods',
         'Franck Paul',
-        '2.7',
+        '2.8',
         [
-            'date'        => '2026-11-09T14:41:47+0100',
+            'date'        => '2026-11-16T09:35:26+0100',
             'requires'    => [['core', '2.36']],
             'type'        => 'plugin',
             'permissions' => 'My',
