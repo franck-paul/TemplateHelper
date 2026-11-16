@@ -205,8 +205,17 @@ class Code
 
             // Extract core code of method (excluding signature)
             $matches = [];
-            if (preg_match('/{(.*)}/ms', $body, $matches) !== false) {
-                $body = $matches[1] ?? '';
+            $core    = preg_match('/{(.*)}/ms', $body, $matches);
+            if ($core !== false) {
+                if ($core === 0) {
+                    if (App::config()->debugMode() || App::config()->devMode()) {
+                        throw new TemplateException('Error processing the template code for ' . self::callableName($method) . ' (method code empty)');
+                    }
+
+                    return $return('');
+                }
+
+                $body = $matches[1];
 
                 if ($variables !== []) {
                     // Replace static variables (values given in parameters of this helper) by their values
